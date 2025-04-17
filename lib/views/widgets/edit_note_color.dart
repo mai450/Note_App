@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:note/constants/const.dart';
-import 'package:note/main.dart';
 import 'package:note/models/note_model.dart';
 import 'package:note/views/widgets/pick_color.dart';
 

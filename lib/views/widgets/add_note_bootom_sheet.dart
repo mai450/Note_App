@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:note/cubits/add_note_cubit/add_note_cubit.dart';
-import 'package:note/cubits/cubit/all_notes_cubit.dart';
+import 'package:note/cubits/all_notes_cubit/all_notes_cubit.dart';
 import 'package:note/views/widgets/add_note_form.dart';
 
 class AddNoteBottomSheet extends StatelessWidget {
