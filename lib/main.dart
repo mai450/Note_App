@@ -17,6 +17,7 @@ void main() async {
   await NotificationService().initNotification();
   await Hive.initFlutter();
   Hive.registerAdapter(NoteModelAdapter());
+  //await Hive.deleteBoxFromDisk(kBoxName);
   await Hive.openBox<NoteModel>(kBoxName);
   Bloc.observer = SimpleBlocObserve();
 

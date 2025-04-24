@@ -11,12 +11,18 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   AddNoteCubit() : super(AddNoteInitial());
 
   Color color = kColors[0];
+  DateTime? reminderTime;
+
   addNote(NoteModel note) async {
     note.color = color.value;
+
     emit(AddNoteLoading());
     try {
       var noteBox = Hive.box<NoteModel>(kBoxName);
+      note.position = noteBox.length;
+      //note.selectedTime = reminderTime;
       await noteBox.add(note);
+      reminderTime = null;
       emit(AddNoteSuccess());
     } catch (e) {
       emit(AddNoteFailure(errMessage: e.toString()));

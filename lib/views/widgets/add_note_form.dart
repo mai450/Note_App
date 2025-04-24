@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:note/constants/const.dart';
+import 'package:note/constants/date_time_function.dart';
 import 'package:note/cubits/add_note_cubit/add_note_cubit.dart';
 import 'package:note/models/note_model.dart';
-import 'package:note/services/notification_service.dart';
 import 'package:note/views/widgets/custom_button.dart';
 import 'package:note/views/widgets/custom_text_feild.dart';
 import 'package:note/views/widgets/date_time_selector.dart';
@@ -22,27 +24,6 @@ class _AddNoteFormState extends State<AddNoteForm> {
   final GlobalKey<FormState> formKey = GlobalKey();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
   String? title, content;
-  DateTime selectedDate = DateTime.now();
-  TimeOfDay selectedTime = TimeOfDay.now();
-
-  Future<void> scheduleNotification() async {
-    final DateTime scheduledDateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
-    await NotificationService().scheduleNotification(
-        scheduledDate: scheduledDateTime, title: title, body: content);
-  }
-
-  void updateDateTime(DateTime date, TimeOfDay time) {
-    setState(() {
-      selectedDate = date;
-      selectedTime = time;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +37,7 @@ class _AddNoteFormState extends State<AddNoteForm> {
             selectedTime: selectedTime,
             onDateTimeChanged: updateDateTime,
           ),
+
           CustomTextfield(
             hintText: 'Title',
             onSave: (value) {
@@ -93,17 +75,27 @@ class _AddNoteFormState extends State<AddNoteForm> {
                 onTap: () {
                   if (formKey.currentState!.validate()) {
                     formKey.currentState!.save();
-                    var currentDate = DateTime.now();
+
+                    // var currentDate = DateTime.now();
                     var formattedDate =
-                        DateFormat('dd-MM-yyyy').format(currentDate);
+                        DateFormat('dd-MM-yyyy').format(selectedDate);
+                    int position = Hive.box<NoteModel>(kBoxName).length;
+
                     var note = NoteModel(
                       title: title!,
                       content: content!,
                       date: formattedDate,
                       color: BlocProvider.of<AddNoteCubit>(context).color.value,
+                      position: position,
+                      // selectedTime:
+                      //     BlocProvider.of<AddNoteCubit>(context).reminderTime,
                     );
+
                     BlocProvider.of<AddNoteCubit>(context).addNote(note);
-                    scheduleNotification();
+                    scheduleNotification(
+                      title: title,
+                      content: content,
+                    );
                   } else {
                     autovalidateMode = AutovalidateMode.always;
                     setState(() {});

@@ -18,7 +18,7 @@ class _NotesListState extends State<NotesList> {
   Widget build(BuildContext context) {
     return BlocBuilder<AllNotesCubit, AllNotesState>(
       builder: (context, state) {
-        List<NoteModel> notes = BlocProvider.of<AllNotesCubit>(context).note!;
+        List<NoteModel> notes = BlocProvider.of<AllNotesCubit>(context).note;
         return ReorderableListView(
             onReorder: (int oldIndex, int newIndex) {
               setState(() {
@@ -26,6 +26,8 @@ class _NotesListState extends State<NotesList> {
                 final item = notes.removeAt(oldIndex);
                 notes.insert(newIndex, item);
               });
+              BlocProvider.of<AllNotesCubit>(context)
+                  .updateOrder(updateNotes: notes);
             },
             children: [
               for (int index = 0; index < notes.length; index++)
